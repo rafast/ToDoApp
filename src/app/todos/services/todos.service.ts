@@ -6,7 +6,7 @@ import { TodoInterface } from '../types/todo.interface';
 @Injectable({
   providedIn: 'root'
 })
-export class TodosService {  
+export class TodosService {          
   todos$ = new BehaviorSubject<TodoInterface[]>([]);
   filter$ = new BehaviorSubject<FilterEnum>(FilterEnum.all);
 
@@ -28,6 +28,44 @@ export class TodosService {
         ...todo,
         isCompleted
       }  
+    });    
+    this.todos$.next(updatedTodos);
+  }
+
+  changeFilter(filterName: FilterEnum) {
+    this.filter$.next(filterName);
+  }
+
+  removeTodo(id: string): void {
+    const updatedTodos = this.todos$
+      .getValue()
+      .filter(todo => todo.id !== id);
+       
+    this.todos$.next(updatedTodos);
+  }
+
+  toggleTodo(id: string) {
+    const updatedTodos = this.todos$.getValue().map((todo) => {
+      if(todo.id === id){
+        return{
+          ...todo,
+          isCompleted: !todo.isCompleted,
+        };
+      }      
+      return todo;
+    });    
+    this.todos$.next(updatedTodos);
+  }
+
+  changeTodo(id: string, text: string): void {
+    const updatedTodos = this.todos$.getValue().map((todo) => {
+      if(todo.id === id){
+        return{
+          ...todo,
+          text,
+        };
+      }      
+      return todo;
     });    
     this.todos$.next(updatedTodos);
   }
